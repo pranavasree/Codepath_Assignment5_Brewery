@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import BreweryDashboard from "../components/BreweryDashboard";
-import { fetchBreweries } from "../api";
-
 const Home = () => {
   const [breweries, setBreweries] = useState([]);
-  const [filteredBreweriesCount, setFilteredBreweriesCount] = useState(10); // Default to 10 records
+  const [filteredBreweriesCount, setFilteredBreweriesCount] = useState(10);
 
   useEffect(() => {
     const loadBreweries = async () => {
@@ -20,7 +18,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="p-6">
+    <div>
       <BreweryDashboard
         breweries={breweries}
         filteredBreweriesCount={filteredBreweriesCount}

@@ -29,11 +29,11 @@ const Details = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="flex justify-center flex-col items-center w-1/4 m-auto mt-60 p-6 bg-white shadow-md rounded-xl">
-      <h2 className="text-xl font-bold text-pink-300 mb-4">
+    <div className="max-w-2xl mx-auto mt-20 p-6 bg-white/10 text-white shadow-md rounded-xl">
+      <h2 className="text-2xl font-bold text-pink-300 mb-4">
         The {brewery.name} Details
       </h2>
-      <div className="ml-2">
+      <div className="space-y-2">
         <p>
           <strong>Type:</strong> {brewery.brewery_type}
         </p>
@@ -52,14 +52,16 @@ const Details = () => {
             href={brewery.website_url}
             target="_blank"
             rel="noopener noreferrer"
+            className="underline text-blue-300"
           >
             {brewery.website_url}
           </a>
         </p>
       </div>
-      <div className="flex flex-col justify-center items-center bg-pink-200 rounded-lg p-2 mt-5 font-bold">
-        <Link to="/" className="flex flex-row justify-center items-center">
-          {<BiArrowBack />}Retrun to Home
+      <div className="flex justify-center bg-pink-200 text-black rounded-lg p-2 mt-6 font-bold">
+        <Link to="/" className="flex items-center space-x-1">
+          <BiArrowBack />
+          <span>Return to Home</span>
         </Link>
       </div>
     </div>

@@ -1,4 +1,7 @@
 import { Link } from "react-router-dom";
+import BreweryTypeChart from "./BreweryTypeChart";
+import BreweriesByStateChart from "./BreweriesByStateChart";
+import { useState } from "react";
 
 const BreweryList = ({
   breweries,
@@ -12,6 +15,8 @@ const BreweryList = ({
   setStateFilter,
   clearFilters,
 }) => {
+  const [visibleComponent, setVisibleComponent] = useState("both"); // <-- Moved here!
+
   const filteredBreweries = breweries
     .filter(
       (brewery) =>
@@ -35,24 +40,77 @@ const BreweryList = ({
     .slice(0, filteredCount);
 
   return (
-    <div className="p-6 bg-white shadow-md rounded-xl">
-      <h2 className="text-2xl font-bold text-amber mb-4">Brewery List</h2>
+    <div className="p-6 bg-gradient-to-br from-[#1a1f3c] to-[#0e1328] text-white shadow-xl rounded-xl backdrop-blur-md">
+      <h2 className="text-3xl font-bold text-purple-300 mb-6 tracking-wide">
+        Brewery Dashboard
+      </h2>
 
-      <div className="mb-4 flex flex-wrap items-center gap-4">
-        {/*Filter by city */}
+      {/* Charts Toggle Section */}
+      <div className="flex gap-4 mb-8 justify-center items-center">
+        <button
+          onClick={() => setVisibleComponent("a")}
+          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+        >
+          Show Pie Chart
+        </button>
+        <button
+          onClick={() => setVisibleComponent("b")}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Show Bar Chart
+        </button>
+        <button
+          onClick={() => setVisibleComponent("none")}
+          className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+        >
+          Hide Both
+        </button>
+        <button
+          onClick={() => setVisibleComponent("both")}
+          className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-gray-700"
+        >
+          Show Both
+        </button>
+      </div>
+
+      {/* Chart Rendering Section */}
+      {visibleComponent === "a" && (
+        <div className="flex justify-center mb-10">
+          <div className="w-full md:w-2/3">
+            <BreweryTypeChart breweries={filteredBreweries} />
+          </div>
+        </div>
+      )}
+
+      {visibleComponent === "b" && (
+        <div className="flex justify-center mb-10">
+          <div className="w-full md:w-2/3">
+            <BreweriesByStateChart breweries={filteredBreweries} />
+          </div>
+        </div>
+      )}
+
+      {visibleComponent === "both" && (
+        <div className="grid md:grid-cols-2 gap-8 mb-10">
+          <BreweryTypeChart breweries={filteredBreweries} />
+          <BreweriesByStateChart breweries={filteredBreweries} />
+        </div>
+      )}
+
+      {/* Filter Section */}
+      <div className="mb-6 flex flex-wrap items-center gap-4">
         <input
           type="text"
-          className="flex-1 p-2 border border-gray-300 rounded-lg"
+          className="flex-1 p-2 rounded-lg bg-[#2b2f4c] text-white placeholder-gray-400 border border-purple-600 focus:ring-2 focus:ring-purple-400"
           placeholder="Filter by city..."
           value={cityFilter}
           onChange={(e) => setCityFilter(e.target.value)}
         />
 
-        {/* Category Filter (Dropdown for Brewery Type) */}
         <select
-          className="flex-1 p-2 border border-gray-300 rounded-lg"
+          className="flex-1 p-2 rounded-lg bg-[#2b2f4c] text-white border border-purple-600 focus:ring-2 focus:ring-purple-400"
           value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)} // Update category filter
+          onChange={(e) => setCategoryFilter(e.target.value)}
         >
           <option value="">All Brewery Types</option>
           <option value="micro">Microbrewery</option>
@@ -63,103 +121,75 @@ const BreweryList = ({
         </select>
       </div>
 
-      {/* State Filter (Radio buttons for state selection, in a new row) */}
-      <div className="mb-4 flex items-center justify-between gap-4">
-        <div className="flex flex-wrap gap-4">
-          <h3 className="font-semibold text-lg">Filter by State</h3>
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              value="California"
-              checked={stateFilter === "California"}
-              onChange={() => setStateFilter("California")}
-            />
-            California
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              value="Colorado"
-              checked={stateFilter === "Colorado"}
-              onChange={() => setStateFilter("Colorado")}
-            />
-            Colorado
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              value="Oregon"
-              checked={stateFilter === "Oregon"}
-              onChange={() => setStateFilter("Oregon")}
-            />
-            Oregon
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              value="Washington"
-              checked={stateFilter === "Washington"}
-              onChange={() => setStateFilter("Washington")}
-            />
-            Washington
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              value="Texas"
-              checked={stateFilter === "Texas"}
-              onChange={() => setStateFilter("Texas")}
-            />
-            Texas
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              value="New York"
-              checked={stateFilter === "New York"}
-              onChange={() => setStateFilter("New York")}
-            />
-            New York
-          </label>
+      {/* State Filter */}
+      <div className="mb-6 flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex flex-wrap gap-4 items-center">
+          <h3 className="font-semibold text-lg text-purple-200">
+            Filter by State:
+          </h3>
+          {[
+            "California",
+            "Colorado",
+            "Oregon",
+            "Washington",
+            "Texas",
+            "New York",
+          ].map((state) => (
+            <label
+              key={state}
+              className="flex items-center gap-2 text-gray-300"
+            >
+              <input
+                type="radio"
+                value={state}
+                checked={stateFilter === state}
+                onChange={() => setStateFilter(state)}
+              />
+              {state}
+            </label>
+          ))}
         </div>
         <button
           onClick={clearFilters}
-          className="mb-4 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
+          className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition-colors"
         >
           Clear All Filters
         </button>
       </div>
 
+      {/* Brewery Table */}
       {filteredBreweries.length > 0 ? (
-        <table className="w-full border-collapse border border-gray-200 mt-6">
-          <thead>
-            <tr className="bg-pink-200">
-              <th className="border p-2 text-left">Brewery Name</th>
-              <th className="border p-2 text-left">Brewery Type</th>
-              <th className="border p-2 text-left">City</th>
-              <th className="border p-2 text-left">State</th>
+        <table className="w-full border border-purple-800 text-left rounded-lg overflow-hidden shadow-md">
+          <thead className="bg-purple-800 text-white">
+            <tr>
+              <th className="p-3">Brewery Name</th>
+              <th className="p-3">Type</th>
+              <th className="p-3">City</th>
+              <th className="p-3">State</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="bg-[#1e223f]">
             {filteredBreweries.map((brewery) => (
-              <tr key={brewery.id} className="hover:bg-gray-100">
-                <td className="border p-2">
+              <tr key={brewery.id} className="hover:bg-[#2a2e4c] transition">
+                <td className="p-3">
                   <Link
                     to={`/brewery/${brewery.id}`}
-                    className="text-breweryGreen hover:underline"
+                    className="text-blue-300 hover:underline"
                   >
                     {brewery.name}
                   </Link>
                 </td>
-                <td className="border p-2">{brewery.brewery_type}</td>
-                <td className="border p-2">{brewery.city}</td>
-                <td className="border p-2">{brewery.state}</td>
+                <td className="p-3 capitalize text-gray-300">
+                  {brewery.brewery_type}
+                </td>
+                <td className="p-3 text-gray-300">{brewery.city}</td>
+                <td className="p-3 text-gray-300">{brewery.state}</td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p className="text-center p-4">No results found.</p>
+        <p className="text-center p-6 text-gray-400">No results found.</p>
       )}
     </div>
   );
